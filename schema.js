@@ -11,7 +11,19 @@ const CurrencyType = new GraphQLObjectType({
   name: "cryptocurrency",
   fields: () => ({
     currency: { type: GraphQLString },
-    price: { type: GraphQLString }
+    price: { type: GraphQLString },
+    logo_url: { type: GraphQLString },
+    name: { type: GraphQLString },
+    price_date: { type: GraphQLString }
+  })
+});
+
+const NewsType = new GraphQLObjectType({
+  name: "currencynews",
+  fields: () => ({
+    title: { type: GraphQLString },
+    categories: { type: GraphQLString },
+    url: { type: GraphQLString }
   })
 });
 
@@ -23,7 +35,17 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent, args) {
         return axios
           .get(`https://api.nomics.com/v1/currencies/ticker?key=${firstApiKey}`)
-          .then(res => res.data);
+          .then(res => res.data.slice(0, 12));
+      }
+    },
+    news: {
+      type: new GraphQLList(NewsType),
+      resolve(parent, args) {
+        return axios
+          .get(
+            `https://min-api.cryptocompare.com/data/v2/news/?lang=EN&api_key=${secondApiKey}`
+          )
+          .then(res => res.data.Data);
       }
     }
   }
