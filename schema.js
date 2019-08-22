@@ -38,6 +38,24 @@ const RootQuery = new GraphQLObjectType({
           .then(res => res.data.slice(0, 12));
       }
     },
+    currency: {
+      type: CurrencyType,
+      args: {
+        currency: {
+          type: GraphQLString
+        }
+      },
+      resolve(parent, args) {
+        console.log(args);
+        return axios
+          .get(
+            `https://api.nomics.com/v1/currencies/ticker?key=${firstApiKey}&ids=${
+              args.currency
+            }`
+          )
+          .then(res => res.data[0]);
+      }
+    },
     news: {
       type: new GraphQLList(NewsType),
       resolve(parent, args) {
